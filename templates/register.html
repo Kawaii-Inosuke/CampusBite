@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<section class="card auth">
+  <h1>Create student account</h1>
+  <p class="muted">Shop staff accounts are created by the owner.</p>
+  <form method="post" action="{{ url_for('register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Name <input type="text" name="name" value="{{ name or '' }}" maxlength="100" required autocomplete="name"></label>
+    <label>Email <input type="email" name="email" value="{{ email or '' }}" maxlength="254" required autocomplete="email"></label>
+    <label>Password <input type="password" name="password" minlength="8" maxlength="128" required autocomplete="new-password">
+      <small class="muted">At least 8 characters.</small></label>
+    <button class="btn btn-primary btn-block" type="submit">Create account</button>
+  </form>
+  <p class="muted center">Already registered? <a href="{{ url_for('login', kind='student') }}">Log in</a></p>
+</section>
+{% endblock %}

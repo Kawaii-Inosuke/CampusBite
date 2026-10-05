@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<section class="hero">
+  <img class="hero-logo" src="{{ url_for('static', filename='logo-hero.png') }}"
+       width="320" height="146" alt="CampusBite">
+  <h1>Order ahead. Skip the queue.</h1>
+  <p class="muted">Pre-order from campus food shops and pick up with your token.</p>
+</section>
+<div class="role-cards">
+  <a class="card role-card" href="{{ url_for('login', kind='student') }}">
+    <span class="role-icon">{{ icon("graduation-cap", 28) }}</span>
+    <h2>Student</h2>
+    <p class="muted">Browse shops, order food and track your token.</p>
+    <span class="btn btn-primary btn-block">Student login {{ icon("arrow-right") }}</span>
+  </a>
+  <a class="card role-card" href="{{ url_for('login', kind='staff') }}">
+    <span class="role-icon">{{ icon("store", 28) }}</span>
+    <h2>Staff</h2>
+    <p class="muted">Shop managers: order queue, menu and opening hours.</p>
+    <span class="btn btn-dark btn-block">Staff login {{ icon("arrow-right") }}</span>
+  </a>
+</div>
+<p class="center muted">New student? <a href="{{ url_for('register') }}">Create an account</a></p>
+{% endblock %}

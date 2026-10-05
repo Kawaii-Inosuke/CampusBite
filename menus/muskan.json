@@ -1,0 +1,151 @@
+{
+  "shop": "Muskan Food Point",
+  "description": "Tandoori, chaap, rolls, North Indian gravies and Indo-Chinese. #10 Kakkan Street, Potheri.",
+  "source": "Muskan_1.jpeg, Muskan_2.jpeg",
+  "categories": [
+    {"name": "Tandoori and Kulcha", "items": [
+      {"name": "Plain Kulcha", "price": 25},
+      {"name": "Butter Kulcha", "price": 30},
+      {"name": "Veg Kulcha", "price": 40},
+      {"name": "Paneer Kulcha", "price": 45},
+      {"name": "Garlic Kulcha", "price": 40},
+      {"name": "Aloo Kulcha", "price": 40}
+    ]},
+    {"name": "Tandoori Items", "items": [
+      {"name": "Paneer Tikka", "price": 170},
+      {"name": "Malai Paneer Tikka", "price": 180},
+      {"name": "Tandoori Mushroom", "price": 160},
+      {"name": "Masala Chaap", "price": 150},
+      {"name": "Malai Chaap", "price": 150},
+      {"name": "Afghani Chaap", "price": 150},
+      {"name": "Achari Chaap", "price": 150},
+      {"name": "Butter Chaap", "price": 150},
+      {"name": "Cream Chaap", "price": 150},
+      {"name": "Stuffed Chaap", "price": 160},
+      {"name": "Stuffed Malai Chaap", "price": 170},
+      {"name": "Maharaja Chaap", "price": 170},
+      {"name": "Muskan Food Special Chaap", "price": 180},
+      {"name": "Tandoori Chicken Chaap", "price": 220}
+    ]},
+    {"name": "Non-Veg Tikka", "items": [
+      {"name": "Tandoori Chicken (Full)", "price": 540},
+      {"name": "Tandoori Chicken (Half)", "price": 260},
+      {"name": "Chicken Tikka", "price": 170},
+      {"name": "Chicken Malai Tikka", "price": 180},
+      {"name": "Quarter Chicken", "price": 150}
+    ]},
+    {"name": "Rolls", "items": [
+      {"name": "Malai Chaap Roll", "price": 140},
+      {"name": "Paneer Tikka Roll", "price": 150},
+      {"name": "Stuffed Chaap Roll", "price": 150},
+      {"name": "Butter Chaap Roll", "price": 140},
+      {"name": "Masala Chaap Roll", "price": 140},
+      {"name": "Chicken Roll", "price": 140}
+    ]},
+    {"name": "Roti and Naan", "items": [
+      {"name": "Plain Roti", "price": 25},
+      {"name": "Butter Roti", "price": 30},
+      {"name": "Paneer Stuffed Roti", "price": 150},
+      {"name": "Garlic Roti", "price": 45},
+      {"name": "Plain Naan", "price": 50},
+      {"name": "Butter Naan", "price": 50},
+      {"name": "Garlic Naan", "price": 50},
+      {"name": "Aloo Naan", "price": 50},
+      {"name": "Paneer Naan", "price": 50},
+      {"name": "Roomali Roti", "price": 40}
+    ]},
+    {"name": "Soups", "items": [
+      {"name": "Chicken Soup", "price": 130},
+      {"name": "Mushroom Soup", "price": 100},
+      {"name": "Veg Soup", "price": 100},
+      {"name": "Clear Chicken Soup", "price": 100},
+      {"name": "Clear Veg Soup", "price": 90},
+      {"name": "Hot Soup", "price": 90}
+    ]},
+    {"name": "Indian Rice", "items": [
+      {"name": "Veg Biriyani", "price": 130},
+      {"name": "Mushroom Biriyani", "price": 150},
+      {"name": "Paneer Biriyani", "price": 150},
+      {"name": "Veg Pulao", "price": 135},
+      {"name": "Paneer Pulao", "price": 140},
+      {"name": "Mushroom Pulao", "price": 140},
+      {"name": "Peas Pulao", "price": 145},
+      {"name": "Chicken Biriyani", "price": 150},
+      {"name": "Chicken 65 Biriyani", "price": 160}
+    ]},
+    {"name": "Veg Chinese Starters", "items": [
+      {"name": "Gobi 65", "price": 150},
+      {"name": "Mushroom 65", "price": 160},
+      {"name": "Paneer 65", "price": 160},
+      {"name": "Gobi Manchurian Dry", "price": 160},
+      {"name": "Mushroom Manchurian Dry", "price": 170},
+      {"name": "Paneer Manchurian Dry", "price": 180},
+      {"name": "Gobi Pepper Fry", "price": 160},
+      {"name": "Paneer Pepper Fry", "price": 180},
+      {"name": "Mushroom Pepper Fry", "price": 180},
+      {"name": "Gobi Manchurian Gravy", "price": 170},
+      {"name": "Paneer Manchurian Gravy", "price": 160},
+      {"name": "Mushroom Manchurian Gravy", "price": 180},
+      {"name": "Honey Chilli Paneer", "price": 180},
+      {"name": "Honey Chilli Potato", "price": 150}
+    ]},
+    {"name": "Veg Chinese Rice and Noodles", "items": [
+      {"name": "Veg Noodles", "price": 130},
+      {"name": "Paneer Noodles", "price": 135},
+      {"name": "Mushroom Noodles", "price": 135},
+      {"name": "Schezwan Veg Noodles", "price": 135},
+      {"name": "Schezwan Paneer Noodles", "price": 140},
+      {"name": "Schezwan Mushroom Noodles", "price": 140},
+      {"name": "Chilli Garlic Noodles", "price": 140},
+      {"name": "Veg Rice", "price": 125},
+      {"name": "Mushroom Rice", "price": 135},
+      {"name": "Paneer Rice", "price": 135},
+      {"name": "Schezwan Rice", "price": 130},
+      {"name": "Schezwan Paneer Rice", "price": 135},
+      {"name": "Schezwan Mushroom Rice", "price": 135},
+      {"name": "Chilli Garlic Rice", "price": 135}
+    ]},
+    {"name": "Non-Veg Chinese Rice and Noodles", "items": [
+      {"name": "Egg Noodles", "price": 130},
+      {"name": "Chicken Noodles", "price": 135},
+      {"name": "Egg Rice", "price": 125},
+      {"name": "Chicken Rice", "price": 125}
+    ]},
+    {"name": "Non-Veg Chinese Starters", "items": [
+      {"name": "Chicken 65", "price": 170},
+      {"name": "Chilli Chicken Dry", "price": 180},
+      {"name": "Chicken Manchurian Gravy", "price": 160},
+      {"name": "Chicken Pepper Fry", "price": 180},
+      {"name": "Dragon Chicken", "price": 180},
+      {"name": "Chicken Lollipop", "price": 200}
+    ]},
+    {"name": "Non-Veg Indian Gravy", "items": [
+      {"name": "Butter Chicken (Full)", "price": 350},
+      {"name": "Butter Chicken (Half)", "price": 170},
+      {"name": "Kadai Chicken", "price": 180},
+      {"name": "Chicken Masala", "price": 180},
+      {"name": "Chicken Pepper Masala", "price": 190}
+    ]},
+    {"name": "Indian Gravy", "items": [
+      {"name": "Paneer Butter Masala", "price": 150},
+      {"name": "Kadai Paneer", "price": 160},
+      {"name": "Punjabi Paneer", "price": 160},
+      {"name": "Kadai Mushroom", "price": 160},
+      {"name": "Kadai Veg", "price": 140},
+      {"name": "Aloo Jeera Fry", "price": 130},
+      {"name": "Green Peas Masala", "price": 140},
+      {"name": "Mushroom Masala", "price": 150},
+      {"name": "Dal Fry", "price": 140},
+      {"name": "Dal Tadka", "price": 150},
+      {"name": "Dal Makhani", "price": 150},
+      {"name": "Malai Kofta", "price": 170},
+      {"name": "Crusted Paneer Masala", "price": 180},
+      {"name": "Mushroom Paneer Masala", "price": 180},
+      {"name": "Mushroom Peas Masala", "price": 150},
+      {"name": "Malai Chaap Gravy", "price": 170},
+      {"name": "Masala Chaap Gravy", "price": 150},
+      {"name": "Butter Chaap Gravy", "price": 160},
+      {"name": "Tava Chaap Gravy", "price": 160}
+    ]}
+  ]
+}

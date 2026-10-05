@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Owner dashboard{% endblock %}
+{% block content %}
+<h1>Shops</h1>
+
+<details class="card" {% if not shops %}open{% endif %}>
+  <summary class="icon-link">{{ icon("user-plus") }}<strong>Add a shop and its manager</strong></summary>
+  <form method="post" action="{{ url_for('owner.add_shop') }}" class="form-grid two-col">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <fieldset>
+      <legend>Shop</legend>
+      <label>Shop name <input type="text" name="shop_name" maxlength="80" required></label>
+      <label>Short description <input type="text" name="description" maxlength="200"></label>
+    </fieldset>
+    <fieldset>
+      <legend>Manager account</legend>
+      <label>Name <input type="text" name="manager_name" maxlength="100" required></label>
+      <label>Email <input type="email" name="manager_email" maxlength="254" required autocomplete="off"></label>
+      <label>Password <input type="password" name="manager_password" minlength="8" maxlength="128" required autocomplete="new-password"></label>
+    </fieldset>
+    <button class="btn btn-primary" type="submit">{{ icon("plus") }}<span>Create shop and manager</span></button>
+  </form>
+</details>
+
+{% if not shops %}<div class="empty">{{ icon("store", 28) }}<p>No shops yet.</p></div>{% endif %}
+<div class="owner-shops">
+  {% for s in shops %}
+  <article class="card owner-shop {% if not s.is_active %}shop-closed{% endif %}">
+    <div class="shop-card-head">
+      <div>
+        <h2 class="icon-link">{{ icon("store", 24) }}<span>{{ s.name }}</span></h2>
+        {% if s.description %}<p class="muted small no-top">{{ s.description }}</p>{% endif %}
+      </div>
+      <div class="badges">
+        <span class="badge {{ 'badge-placed' if s.is_active else 'badge-off' }}">{{ 'Active' if s.is_active else 'Deactivated' }}</span>
+        <span class="badge {{ 'badge-ready' if s.is_open else 'badge-off' }}">{{ 'Open' if s.is_open else 'Closed' }}</span>
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>Manager</dt><dd>{% if s.manager_email %}{{ s.manager_name }} &lt;{{ s.manager_email }}&gt;{% else %}<em>none</em>{% endif %}</dd></div>
+      <div><dt>Orders</dt><dd>{{ s.order_count }}</dd></div>
+      <div><dt>Menu items</dt><dd>{{ s.item_count }}</dd></div>
+    </dl>
+    <div class="owner-actions">
+      <form method="post" action="{{ url_for('owner.toggle_active', shop_id=s.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-ghost btn-sm" type="submit">{{ icon("eye-off" if s.is_active else "eye") }}<span>{{ 'Deactivate' if s.is_active else 'Reactivate' }}</span></button>
+      </form>
+      {% if s.manager_email %}
+      <details>
+        <summary class="btn btn-ghost btn-sm">{{ icon("key") }}<span>Reset manager password</span></summary>
+        <form method="post" action="{{ url_for('owner.reset_manager_password', shop_id=s.id) }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="password" name="new_password" minlength="8" maxlength="128" required placeholder="New password" autocomplete="new-password" aria-label="New password">
+          <button class="btn btn-primary btn-sm" type="submit">Reset</button>
+        </form>
+      </details>
+      {% endif %}
+      {% if s.order_count == 0 %}
+      <details>
+        <summary class="btn btn-ghost btn-sm danger-text">{{ icon("trash") }}<span>Delete</span></summary>
+        <form method="post" action="{{ url_for('owner.delete_shop', shop_id=s.id) }}" class="inline-form"
+              data-confirm="Permanently delete {{ s.name }}, its menu and its manager account?">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="text" name="confirm_name" required placeholder="Type: {{ s.name }}" aria-label="Type the shop name to confirm">
+          <button class="btn btn-danger btn-sm" type="submit">{{ icon("trash") }}<span>Delete shop</span></button>
+        </form>
+      </details>
+      {% else %}
+      <span class="muted small">Has orders: can only be deactivated.</span>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

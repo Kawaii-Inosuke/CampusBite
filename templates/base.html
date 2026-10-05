@@ -1,0 +1,73 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# Read by app.js and sent as the X-CSRFToken header on fetch() calls. #}
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}CampusBite{% endblock %} · CampusBite</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body{% if current_role == 'student' %} data-cart-api="{{ url_for('student.cart_set_api') }}"{% endif %}>
+  {% include "_sprite.html" %}
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}"
+             srcset="{{ url_for('static', filename='logo.png') }} 1x, {{ url_for('static', filename='logo@2x.png') }} 2x"
+             width="114" height="52" alt="CampusBite home"></a>
+      <nav class="nav" aria-label="Main">
+        {% if current_role == 'student' %}
+          <a href="{{ url_for('student.shops') }}">{{ icon("store") }}<span>Shops</span></a>
+          <a href="{{ url_for('student.cart') }}">{{ icon("shopping-cart") }}<span>Cart</span>
+            <span class="pill" data-cart-count {% if not cart_count %}hidden{% endif %}>{{ cart_count }}</span></a>
+          <a href="{{ url_for('student.my_orders') }}">{{ icon("receipt") }}<span>Orders</span></a>
+        {% elif current_role == 'manager' %}
+          <a href="{{ url_for('manager.orders') }}">{{ icon("clipboard-list") }}<span>Queue</span></a>
+          <a href="{{ url_for('manager.menu') }}">{{ icon("utensils") }}<span>Menu</span></a>
+        {% elif current_role == 'owner' %}
+          <a href="{{ url_for('owner.dashboard') }}">{{ icon("store") }}<span>Shops</span></a>
+        {% endif %}
+        {% if current_role %}
+          <form method="post" action="{{ url_for('logout') }}" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="link-btn" type="submit">{{ icon("log-out") }}<span>Log out</span></button>
+          </form>
+        {% else %}
+          <a class="owner-link" href="{{ url_for('login', kind='owner') }}">{{ icon("shield") }}<span>Owner login</span></a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}" role="status">
+          {{ icon("circle-check" if category == "success" else "circle-alert") }}<span>{{ message }}</span></div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="wrap footer">CampusBite · order ahead, skip the queue</footer>
+
+  {# Small confirm dialog (used instead of the browser's confirm()/alert()). #}
+  <dialog id="confirm-dialog" class="dialog" aria-labelledby="confirm-title">
+    <form method="dialog">
+      <h2 id="confirm-title" class="dialog-title">{{ icon("triangle-alert") }}<span>Are you sure?</span></h2>
+      <p id="confirm-message"></p>
+      <div class="dialog-actions">
+        <button class="btn btn-ghost" value="cancel" type="submit">Cancel</button>
+        <button class="btn btn-primary" value="ok" type="submit" id="confirm-ok">OK</button>
+      </div>
+    </form>
+  </dialog>
+  {# Short error/info messages from the cart steppers. #}
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

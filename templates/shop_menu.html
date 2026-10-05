@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon, qty_control %}
+{% block title %}{{ shop.name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ shop.name }} <span class="badge {{ 'badge-ready' if shop.is_open else 'badge-off' }}">{{ 'Open' if shop.is_open else 'Closed' }}</span></h1>
+    {% if shop.description %}<p class="muted small no-top">{{ shop.description }}</p>{% endif %}
+  </div>
+</div>
+
+{% if not shop.is_open %}
+  <div class="flash flash-error">{{ icon("circle-alert") }}<span>This shop is closed right now, so it can't take orders. You can still look at the menu.</span></div>
+{% endif %}
+{% if other_shop %}
+  <div class="flash flash-warn" data-other-shop-banner>{{ icon("triangle-alert") }}<span>Your cart has items from <strong>{{ other_shop }}</strong>. Adding an item here will clear that cart first.</span></div>
+{% endif %}
+
+<div class="menu-tools">
+  <label class="search-box">{{ icon("search") }}
+    <input type="search" id="menu-search" placeholder="Search {{ shop.name }}" aria-label="Search menu" autocomplete="off">
+  </label>
+  <button type="button" class="btn btn-ghost" data-expand="all">Expand all</button>
+  <button type="button" class="btn btn-ghost" data-expand="none">Collapse all</button>
+</div>
+<div class="empty" id="no-results" hidden>{{ icon("search", 28) }}<p>No items match your search.</p></div>
+
+{% if not sections %}<div class="empty">{{ icon("utensils", 28) }}<p>This shop has no menu items yet.</p></div>{% endif %}
+<div id="shop-menu" data-shop-id="{{ shop.id }}" data-shop-name="{{ shop.name }}"
+     {% if other_shop %}data-other-shop="{{ other_shop }}"{% endif %}>
+{% for section in sections %}
+<details class="menu-section" {% if (open_section and section.id == open_section) or (not open_section and loop.first) %}open{% endif %}>
+  <summary>{{ icon("chevron-right", cls="chevron") }}<span>{{ section.name }}</span> <span class="count">{{ section['items']|length }}</span></summary>
+  <ul class="menu-rows">
+    {% for item in section['items'] %}
+    <li class="menu-row {% if not item.available %}row-off{% endif %}" id="item-{{ item.id }}" data-name="{{ item.name|lower }}">
+      {% if item.image_url %}<img class="thumb" src="{{ item.image_url }}" alt="" loading="lazy" data-hide-on-error>{% endif %}
+      <span class="row-name">{{ item.name }}</span>
+      <span class="row-price">₹{{ '%g'|format(item.price|float) }}</span>
+      {% if not item.available %}
+        <span class="badge badge-off">Sold out</span>
+      {% elif shop.is_open %}
+        {{ qty_control(item, quantities.get(item.id, 0), "menu", replace=other_shop is not none) }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</details>
+{% endfor %}
+</div>
+
+{# Sticky bottom bar: shown while the cart has items (updated live by app.js). #}
+<div class="cart-bar" id="cart-bar" {% if not cart.count %}hidden{% endif %}>
+  <div class="wrap cart-bar-inner">
+    <span class="cart-bar-summary">{{ icon("shopping-cart") }}
+      <span><strong data-bar-count>{{ cart.count }}</strong> <span data-bar-label>{{ 'item' if cart.count == 1 else 'items' }}</span>
+      · ₹<strong data-bar-total>{{ '%.2f'|format(cart.total) }}</strong></span></span>
+    <a class="btn btn-light" href="{{ url_for('student.cart') }}">View cart {{ icon("arrow-right") }}</a>
+  </div>
+</div>
+{% endblock %}

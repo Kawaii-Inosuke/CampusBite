@@ -1,0 +1,11 @@
+# Secrets: never commit
+.env
+
+# Python / local
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Seed passwords: never commit (seed_credentials.example.json is the template)
+seed_credentials.json

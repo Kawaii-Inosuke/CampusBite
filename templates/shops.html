@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Shops{% endblock %}
+{% block content %}
+<h1>Campus shops</h1>
+{% if not shops %}
+  <div class="empty">{{ icon("store", 28) }}<p>No shops are available right now.</p></div>
+{% endif %}
+<div class="shop-grid">
+  {% for s in shops %}
+  <a class="card shop-card {% if not s.is_open %}shop-closed{% endif %}" href="{{ url_for('student.shop_menu', shop_id=s.id) }}">
+    <div class="shop-card-head">
+      <span class="shop-icon">{{ icon("store", 24) }}</span>
+      <h2>{{ s.name }}</h2>
+      <span class="badge {{ 'badge-ready' if s.is_open else 'badge-off' }}">{{ 'Open' if s.is_open else 'Closed' }}</span>
+    </div>
+    {% if s.description %}<p class="muted">{{ s.description }}</p>{% endif %}
+    <span class="small muted icon-link">{{ s.item_count }} items · {{ 'View menu' if s.is_open else 'View menu (not taking orders)' }} {{ icon("chevron-right") }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

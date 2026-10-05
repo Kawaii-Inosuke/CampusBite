@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon, status_badge %}
+{% block title %}Order queue{% endblock %}
+{% block content %}
+{% with title="Order queue", next="orders" %}{% include "_shop_status.html" %}{% endwith %}
+<p class="muted small" data-autorefresh="20">Oldest first · refreshes every 20 s</p>
+{% if not active %}
+  <div class="empty">{{ icon("clipboard-list", 28) }}<p>No active orders. New orders appear here automatically.</p></div>
+{% endif %}
+<div class="queue">
+  {% for o in active %}
+  <article class="card queue-card">
+    <div class="queue-head">
+      <span class="mini-token big">{{ o.token_no }}</span>
+      <div class="grow">
+        <strong>{{ o.student }}</strong>
+        <span class="muted small">{{ o.placed_at }} · order #{{ o.id }}</span>
+      </div>
+      {{ status_badge(o.status) }}
+    </div>
+    <ul class="items-compact">
+      {% for i in o['items'] %}<li><strong>{{ i.quantity }}×</strong> {{ i.name }}</li>{% endfor %}
+    </ul>
+    {% set nxt = next_status.get(o.status) %}
+    {% if nxt %}
+    <form method="post" action="{{ url_for('manager.update_status', order_id=o.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="status" value="{{ nxt }}">
+      <button class="btn btn-block {% if nxt == 'Ready' %}btn-ready{% else %}btn-primary{% endif %}" type="submit">
+        {{ icon("circle-check" if nxt == "Ready" else "chef-hat") }}<span>Mark {{ nxt }}</span></button>
+    </form>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>
+
+{% if ready %}
+<h2 class="section-title">Ready today</h2>
+<ul class="ready-list">
+  {% for o in ready %}
+  <li><span class="mini-token">{{ o.token_no }}</span> {{ o.student }}
+      <span class="muted small">· {% for i in o['items'] %}{{ i.quantity }}× {{ i.name }}{% if not loop.last %}, {% endif %}{% endfor %}</span></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

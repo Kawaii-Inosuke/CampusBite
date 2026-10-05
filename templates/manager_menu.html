@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Manage menu{% endblock %}
+
+{# One item form, used for "add" (item=None) and "edit". #}
+{% macro item_form(action, item=None, category_id=None) %}
+<form method="post" action="{{ url_for('manager.menu_action') }}" enctype="multipart/form-data" class="form-grid compact-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="{{ action }}">
+  {% if item %}<input type="hidden" name="item_id" value="{{ item.id }}">{% endif %}
+  <label>Name <input type="text" name="name" value="{{ item.name if item else '' }}" maxlength="80" required></label>
+  <label>Price (₹) <input type="number" name="price" value="{{ item.price if item else '' }}" min="0" max="99999.99" step="0.01" required></label>
+  <label>Category
+    <select name="category_id">
+      <option value="">No category</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if (item and item.category_id == c.id) or (not item and category_id == c.id) %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Photo URL <small class="muted">(optional)</small>
+    <input type="url" name="image_url" value="{{ item.image_url if item and item.image_url else '' }}" maxlength="500"
+           placeholder="{{ (bucket_prefix ~ 'dish.jpg') if bucket_prefix else 'https://…' }}">
+  </label>
+  {% if upload_enabled %}
+  <label>…or upload a photo <small class="muted">(JPEG/PNG/WebP, max 2 MB)</small>
+    <input type="file" name="image_file" accept="image/jpeg,image/png,image/webp">
+  </label>
+  {% endif %}
+  <label class="check"><input type="checkbox" name="available" {% if not item or item.available %}checked{% endif %}> Available</label>
+  <button class="btn btn-primary" type="submit">{{ icon("pencil" if item else "plus") }}<span>{{ 'Save' if item else 'Add item' }}</span></button>
+</form>
+{% endmacro %}
+
+{% macro item_rows(items) %}
+<ul class="menu-rows">
+  {% for item in items %}
+  <li class="menu-row manager-row {% if not item.available %}row-off{% endif %}" data-name="{{ item.name|lower }}">
+    <span class="row-name">{{ item.name }}</span>
+    <span class="row-price">₹{{ '%g'|format(item.price|float) }}</span>
+    <form method="post" action="{{ url_for('manager.menu_action') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="toggle_item">
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      <button class="badge-btn badge {{ 'badge-ready' if item.available else 'badge-off' }}" type="submit"
+              title="Click to toggle" aria-label="{{ item.name }} is {{ 'available' if item.available else 'unavailable' }}. Toggle">{{ icon("eye" if item.available else "eye-off") }}<span>{{ 'Available' if item.available else 'Unavailable' }}</span></button>
+    </form>
+    <details class="row-edit">
+      <summary class="icon-btn" aria-label="Edit {{ item.name }}" title="Edit">{{ icon("pencil") }}</summary>
+      {{ item_form('edit_item', item) }}
+    </details>
+  </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+
+{% block content %}
+{% with title="Menu", next="menu" %}{% include "_shop_status.html" %}{% endwith %}
+
+<details class="card">
+  <summary class="icon-link">{{ icon("folder-plus") }}<strong>Add a category</strong></summary>
+  <form method="post" action="{{ url_for('manager.menu_action') }}" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="add_category">
+    <input type="text" name="name" maxlength="60" required placeholder="e.g. Soups" aria-label="New category name">
+    <button class="btn btn-primary" type="submit">{{ icon("plus") }}<span>Add</span></button>
+  </form>
+</details>
+
+<div class="menu-tools">
+  <label class="search-box">{{ icon("search") }}
+    <input type="search" id="menu-search" placeholder="Search items" aria-label="Search menu" autocomplete="off">
+  </label>
+  <button type="button" class="btn btn-ghost" data-expand="all">Expand all</button>
+  <button type="button" class="btn btn-ghost" data-expand="none">Collapse all</button>
+</div>
+<div class="empty" id="no-results" hidden>{{ icon("search", 28) }}<p>No items match your search.</p></div>
+
+{% for c in categories %}
+<details class="menu-section" {% if open_section == c.id %}open{% endif %}>
+  <summary>{{ icon("chevron-right", cls="chevron") }}<span>{{ c.name }}</span> <span class="count">{{ c['items']|length }}</span></summary>
+  <div class="category-tools">
+    <form method="post" action="{{ url_for('manager.menu_action') }}" class="inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="rename_category">
+      <input type="hidden" name="category_id" value="{{ c.id }}">
+      <input type="text" name="name" value="{{ c.name }}" maxlength="60" required aria-label="Category name">
+      <button class="btn btn-ghost btn-sm" type="submit">{{ icon("pencil") }}<span>Rename</span></button>
+    </form>
+    {% for direction, label in [('up', 'Move up'), ('down', 'Move down')] %}
+    <form method="post" action="{{ url_for('manager.menu_action') }}" class="inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="action" value="move_category">
+      <input type="hidden" name="category_id" value="{{ c.id }}">
+      <input type="hidden" name="direction" value="{{ direction }}">
+      <button class="icon-btn" type="submit" aria-label="{{ label }}: {{ c.name }}" title="{{ label }}">{{ icon("arrow-" ~ direction) }}</button>
+    </form>
+    {% endfor %}
+  </div>
+  {{ item_rows(c['items']) }}
+  <details class="add-item">
+    <summary class="small icon-link">{{ icon("plus") }}<strong>Add item to {{ c.name }}</strong></summary>
+    {{ item_form('add_item', None, c.id) }}
+  </details>
+</details>
+{% endfor %}
+
+{% if other['items'] %}
+<details class="menu-section" {% if open_section == 0 %}open{% endif %}>
+  <summary>{{ icon("chevron-right", cls="chevron") }}<span>{{ other.name }}</span> <span class="count">{{ other['items']|length }}</span></summary>
+  {{ item_rows(other['items']) }}
+</details>
+{% endif %}
+
+<details class="card add-item">
+  <summary class="icon-link">{{ icon("plus") }}<strong>Add an item</strong></summary>
+  {{ item_form('add_item') }}
+</details>
+{% endblock %}

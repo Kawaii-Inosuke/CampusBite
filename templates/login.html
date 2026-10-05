@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ form.title }}{% endblock %}
+{% block content %}
+<section class="card auth">
+  <h1>{{ form.title }}</h1>
+  <p class="muted">{{ form.subtitle }}</p>
+  <form method="post" action="{{ url_for('login', kind=kind) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email <input type="email" name="email" value="{{ email or '' }}" maxlength="254" required autocomplete="email"></label>
+    <label>Password <input type="password" name="password" maxlength="128" required autocomplete="current-password"></label>
+    <button class="btn {{ 'btn-dark' if kind != 'student' else 'btn-primary' }} btn-block" type="submit">Log in</button>
+  </form>
+  {% if kind == 'student' %}
+    <p class="muted center">New here? <a href="{{ url_for('register') }}">Create account</a></p>
+  {% endif %}
+  <p class="muted center small"><a class="icon-link" href="{{ url_for('index') }}">{{ icon("arrow-left") }}<span>Back</span></a></p>
+</section>
+{% endblock %}

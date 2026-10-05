@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Error {{ code }}{% endblock %}
+{% block content %}
+<section class="card auth center">
+  <div class="token small-token">{{ code }}</div>
+  <p>{{ message }}</p>
+  <p><a class="btn btn-primary" href="{{ url_for('index') }}">{{ icon("arrow-left") }}<span>Go home</span></a></p>
+</section>
+{% endblock %}

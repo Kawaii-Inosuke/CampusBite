@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon, status_badge %}
+{% block title %}Token {{ order.token_no }}{% endblock %}
+{% block content %}
+<section class="card order-card" data-status-url="{{ url_for('student.order_status_api', order_id=order.id) }}">
+  <p class="center shop-label">{{ order.shop_name }}</p>
+  <p class="muted center no-top">Your token</p>
+  <div class="token">{{ order.token_no }}</div>
+  <p class="center">
+    {{ status_badge(order.status, id="status-badge") }}
+  </p>
+  <ol class="steps" id="status-steps" data-status="{{ order.status }}">
+    <li data-step="Placed">Placed</li>
+    <li data-step="Preparing">Preparing</li>
+    <li data-step="Ready">Ready</li>
+  </ol>
+  <p class="center muted small" id="status-note">
+    {% if order.status == 'Ready' %}Your food is ready. Show this token at the {{ order.shop_name }} counter.
+    {% else %}This page updates automatically every 10 seconds.{% endif %}
+  </p>
+  <ul class="lines">
+    {% for i in items %}
+    <li class="line"><span>{{ i.name }} × {{ i.quantity }}</span><span>₹{{ '%.2f'|format(i.subtotal) }}</span></li>
+    {% endfor %}
+  </ul>
+  <div class="total"><span>Total</span><strong>₹{{ '%.2f'|format(total) }}</strong></div>
+  <p class="muted small">Order #{{ order.id }} · {{ order.token_date.strftime('%d %b %Y') }}</p>
+</section>
+<p class="center"><a href="{{ url_for('student.my_orders') }}">All my orders</a> · <a href="{{ url_for('student.shops') }}">Back to shops</a></p>
+{% endblock %}

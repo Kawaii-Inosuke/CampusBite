@@ -1,0 +1,14 @@
+{% from "_icons.html" import icon %}
+{# Shop name + Open/Closed toggle, shown at the top of both manager pages. #}
+<div class="page-head">
+  <div>
+    <h1>{{ title }}</h1>
+    <p class="muted small no-top">{{ shop.name }}{% if not shop.is_active %} · <strong>deactivated by owner (hidden from students)</strong>{% endif %}</p>
+  </div>
+  <form method="post" action="{{ url_for('manager.toggle_open') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="badge-btn badge big-badge {{ 'badge-ready' if shop.is_open else 'badge-off' }}" type="submit"
+            title="Click to switch" aria-label="Shop is {{ 'open' if shop.is_open else 'closed' }}. Switch to {{ 'closed' if shop.is_open else 'open' }}">{{ icon("power") }}<span>{{ 'Open' if shop.is_open else 'Closed' }} · switch</span></button>
+  </form>
+</div>

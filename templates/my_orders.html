@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon, status_badge %}
+{% block title %}My orders{% endblock %}
+{% block content %}
+<h1>My orders</h1>
+{% if not orders %}
+  <div class="empty">{{ icon("receipt", 28) }}<p>No orders yet.</p><a class="btn btn-primary" href="{{ url_for('student.shops') }}">{{ icon("store") }}<span>Browse shops</span></a></div>
+{% else %}
+<ul class="order-list">
+  {% for o in orders %}
+  <li>
+    <a class="card order-row" href="{{ url_for('student.order_detail', order_id=o.id) }}">
+      <span class="mini-token">{{ o.token_no }}</span>
+      <span class="grow">
+        <strong>{{ o.shop_name }}</strong>
+        <span class="muted small">Token {{ o.token_no }} · {{ o.token_date.strftime('%d %b %Y') }} · ₹{{ '%.2f'|format(o.total) }}</span>
+      </span>
+      {{ status_badge(o.status) }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

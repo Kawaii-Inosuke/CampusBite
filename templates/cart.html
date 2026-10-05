@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon, qty_control %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h1>Your cart</h1>
+<div class="empty" id="cart-empty" {% if lines %}hidden{% endif %}>
+  {{ icon("shopping-cart", 28) }}
+  <p>Your cart is empty.</p>
+  <a class="btn btn-primary" href="{{ url_for('student.shops') }}">{{ icon("store") }}<span>Browse shops</span></a>
+</div>
+{% if lines %}
+<section class="card" id="cart-card">
+  <p class="cart-shop">{{ icon("store") }}<span>Ordering from <strong>{{ shop.name }}</strong></span>
+    {% if shop_ok %}<a class="small" href="{{ url_for('student.shop_menu', shop_id=shop.id) }}">Add more</a>{% endif %}</p>
+  {% if not shop_ok %}<div class="flash flash-error">{{ icon("circle-alert") }}<span>{{ shop.name }} is not taking orders right now.</span></div>{% endif %}
+  <ul class="lines">
+    {% for line in lines %}
+    <li class="line cart-line {% if not line.available %}line-off{% endif %}" data-line-id="{{ line.id }}">
+      <div class="line-info">
+        <strong>{{ line.name }}</strong>
+        <span class="muted small">₹{{ '%.2f'|format(line.price) }} each</span>
+        {% if not line.available %}<span class="badge badge-off">No longer available</span>{% endif %}
+      </div>
+      <div class="line-right">
+        {% if line.available and shop_ok %}{{ qty_control(line, line.quantity, "cart") }}{% else %}<span class="muted">× {{ line.quantity }}</span>{% endif %}
+        <span class="line-subtotal">₹<span data-subtotal>{{ '%.2f'|format(line.subtotal) }}</span></span>
+        <form method="post" action="{{ url_for('student.cart_set_form') }}" class="js-cart-form inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="item_id" value="{{ line.id }}">
+          <input type="hidden" name="quantity" value="0">
+          <input type="hidden" name="next" value="cart">
+          <button class="link-btn danger small" type="submit" aria-label="Remove {{ line.name }}">Remove</button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="total"><span>Total</span><strong>₹<span data-cart-total>{{ '%.2f'|format(total) }}</span></strong></div>
+  <p class="muted small">Prices are checked again when you place the order. Pay at the counter on pickup.</p>
+  <form method="post" action="{{ url_for('student.place_order') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-primary btn-block" type="submit" data-place-order {% if not can_order %}disabled{% endif %}>Place order</button>
+  </form>
+  {% if shop_ok and not can_order %}<p class="muted small center" data-remove-hint>Remove unavailable items to continue.</p>{% endif %}
+</section>
+{% endif %}
+{% endblock %}

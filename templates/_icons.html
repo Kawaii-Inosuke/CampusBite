@@ -1,0 +1,47 @@
+{# Icon helpers. Use:  {% from "_icons.html" import icon, status_badge %}
+   icon("store")            decorative icon (hidden from screen readers)
+   icon("x", label="Close") icon that carries meaning on its own        #}
+{% macro icon(name, size=20, label=None, cls="") -%}
+<svg class="icon {{ cls }}" width="{{ size }}" height="{{ size }}"
+     {%- if label %} role="img" aria-label="{{ label }}"{% else %} aria-hidden="true"{% endif %} focusable="false"><use href="#i-{{ name }}"></use></svg>
+{%- endmacro %}
+
+{# Order status badge with its icon: Placed = clock, Preparing = chef hat, Ready = check. #}
+{% macro status_badge(status, id=None) -%}
+{%- set icons = {"Placed": "clock", "Preparing": "chef-hat", "Ready": "circle-check"} -%}
+<span class="badge badge-{{ status|lower }}"{% if id %} id="{{ id }}"{% endif %}>{{ icon(icons.get(status, "clock")) }}<span class="badge-text">{{ status }}</span></span>
+{%- endmacro %}
+
+{# Quantity control for one menu item (shop menu and cart page).
+   Without JavaScript these are ordinary forms posting to /cart/set.
+   With JavaScript, static/app.js takes over and talks to /api/cart/set.
+   qty 0 shows "Add"; otherwise the stepper  [ - qty + ]  (max 10).        #}
+{% macro qty_control(item, qty, next="menu", replace=False) -%}
+<div class="qty-control" data-item-id="{{ item.id }}" data-item-name="{{ item.name }}"
+     data-price="{{ item.price }}" data-qty="{{ qty }}">
+  {%- if qty == 0 %}
+  <form method="post" action="{{ url_for('student.cart_set_form') }}" class="js-cart-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="item_id" value="{{ item.id }}">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if replace %}<input type="hidden" name="replace_cart" value="1">{% endif %}
+    <button type="submit" class="btn-add" aria-label="Add {{ item.name }}">Add {{ icon("plus") }}</button>
+  </form>
+  {%- else %}
+  <div class="stepper">
+    {% for delta, name, label in [(-1, "minus", "One less"), (1, "plus", "One more")] %}
+    <form method="post" action="{{ url_for('student.cart_set_form') }}" class="js-cart-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="item_id" value="{{ item.id }}">
+      <input type="hidden" name="quantity" value="{{ qty + delta }}">
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="step-btn" aria-label="{{ label }} {{ item.name }}"
+              {% if delta > 0 and qty >= 10 %}disabled{% endif %}>{{ icon(name) }}</button>
+    </form>
+    {% if delta < 0 %}<span class="step-qty" aria-live="polite">{{ qty }}</span>{% endif %}
+    {% endfor %}
+  </div>
+  {%- endif %}
+</div>
+{%- endmacro %}
