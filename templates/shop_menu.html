@@ -29,7 +29,9 @@
 <div id="shop-menu" data-shop-id="{{ shop.id }}" data-shop-name="{{ shop.name }}"
      {% if other_shop %}data-other-shop="{{ other_shop }}"{% endif %}>
 {% for section in sections %}
-<details class="menu-section" {% if (open_section and section.id == open_section) or (not open_section and loop.first) %}open{% endif %}>
+{# All categories start collapsed; the student opens the ones they want.
+   (After a no-JavaScript "Add", the category they were in is reopened.) #}
+<details class="menu-section" {% if open_section and section.id == open_section %}open{% endif %}>
   <summary>{{ icon("chevron-right", cls="chevron") }}<span>{{ section.name }}</span> <span class="count">{{ section['items']|length }}</span></summary>
   <ul class="menu-rows">
     {% for item in section['items'] %}

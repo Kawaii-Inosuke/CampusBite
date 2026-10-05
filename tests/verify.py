@@ -234,8 +234,8 @@ def main():
     check("shops page lists active shops with Open badge", shop_a in shops_html and shop_b in shops_html
           and "badge-ready" in shops_html)
     menu_a = text(student.get(f"/shops/{a_id}"))
-    check("shop menu: collapsible sections (empty category hidden), first open",
-          menu_a.count('<details class="menu-section"') == 2 and re.search(r'<details class="menu-section"\s+open', menu_a))
+    check("shop menu: collapsible sections (empty category hidden), all collapsed",
+          menu_a.count('<details class="menu-section"') == 2 and not re.search(r'<details class="menu-section"\s+open', menu_a))
 
     add(student, thali, 2, price="0.01")
     add(student, lassi, 1)
@@ -515,8 +515,8 @@ def main():
         n_cats = q1("select count(distinct category_id) from menu_items where shop_id = %s", (sid,))[0]
         sections = html.count('<details class="menu-section"')
         opened = len(re.findall(r'<details class="menu-section"\s+open', html))
-        check(f"{name}: {n_cats} collapsible sections, only the first open, search + expand/collapse",
-              sections == n_cats and opened == 1 and 'id="menu-search"' in html and 'data-expand="all"' in html,
+        check(f"{name}: {n_cats} collapsible sections, all collapsed, search + expand/collapse",
+              sections == n_cats and opened == 0 and 'id="menu-search"' in html and 'data-expand="all"' in html,
               f"sections={sections} open={opened}")
 
     creds_file = Path(__file__).resolve().parent.parent / "seed_credentials.json"
